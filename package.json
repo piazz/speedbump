@@ -1,34 +1,14 @@
 {
-  "name": "pause",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@emotion/core": "^10.0.10",
-    "@types/firefox-webext-browser": "^67.0.1",
-    "@types/jest": "^24.0.11",
-    "@types/node": "^11.13.6",
-    "@types/react": "^16.8.14",
-    "@types/react-dom": "^16.8.4",
-    "emotion": "^10.0.9",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-scripts": "2.1.8",
-    "typescript": "^3.4.4"
-  },
+  "name": "speedbump",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "INLINE_RUNTIME_CHUNK=false react-scripts build",
-    "build-ext": "rm -rf build-extension && npm run build && mkdir build-extension && cp -r extension/* build-extension && cp -r build/static build-extension && cp -r build/index.html build-extension && cp -r build/asset-manifest.json build-extension",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build": "./scripts/build.sh"
   },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "author": "Michael Piazza",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/piazzatron/speedbump/issues"
+  }
 }

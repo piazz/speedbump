@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import CountDownContainer from "./components/CountDown"
 import { Colors } from "./components/css"
-import { jsx, css } from "@emotion/core"
+import { jsx, css, SerializedStyles } from "@emotion/core"
 import Mountain from "../src/assets/mountains.png"
 
 const appStyle = css({
@@ -86,7 +86,14 @@ const App = () => {
     id: -1,
   } as ILocalState)
 
+  const [isProceedEnabled, setIsProceedEnabled] = useState(false)
+
   useEffect(() => {
+    // If we're in dev mode, there's no extension, no so browser.
+    if (process.env.NODE_ENV !== "production" ) {
+      console.log("App running standalone without extension")
+      return
+    }
     browser.storage.local.get(STATE_KEY).then(state => {
       setLocalState(state[STATE_KEY])
       console.log(state)
@@ -104,6 +111,10 @@ const App = () => {
       type: "PROCEED",
       id: localState.id
     })
+  }
+  
+  function enableButton() {
+    setIsProceedEnabled(true)
   }
 
   function retreat() {
@@ -129,11 +140,12 @@ const App = () => {
         <Buttons css={buttonsStyle}
           turnBackSelected={retreat}
           proceedSelected={proceed}
+          proceedEnabled={isProceedEnabled}
         />
       </div>
       <div css={containerStyle}>
         <CountDownContainer 
-          onReachZero={proceed}
+          onReachZero={enableButton}
         />
         <div>
           <Title title="Pause." />
@@ -176,6 +188,7 @@ interface IButtonsProps {
   turnBackSelected: () => void;
   proceedSelected: () => void;
   className?: string;
+  proceedEnabled: boolean;
 }
 
 interface ButtonsState {
@@ -303,18 +316,20 @@ const Buttons = (props: IButtonsProps) => {
               isClicked={e.isSelected}
               text={e.text}
               key={e.id}
+              enabled={true}
             /> : null
           ))
         }
       </div>
       <div css={buttonColumnStyle}>
-        {
+        { 
           buttonState.proceedButtons.map(e => ( e.isVisible ? 
             <ButtonHolder 
               onClick={() => { handleProceedClick(e.id)}}
               isClicked={e.isSelected}
               text={e.text}
               key={e.id}
+              enabled={props.proceedEnabled}
             /> : null
           ))
         }
@@ -339,6 +354,7 @@ interface IButtonHolderProps {
   onClick: () => void;
   isClicked: boolean;
   text: string;
+  enabled: boolean;
 }
 
 const buttonHolderStyle = css({
@@ -349,12 +365,24 @@ const buttonHolderStyle = css({
   justifyContent: "space-between"
 })
 
+const disabledStyle = css({
+  opacity: 0.25
+})
+
 const ButtonHolder = (props: IButtonHolderProps) => {
+  function computeStyle(): Array<SerializedStyles> {
+    if (props.enabled) {
+      return [buttonHolderStyle]
+    }
+    return [buttonHolderStyle, disabledStyle]
+  }
+
   return (
-    <div css={buttonHolderStyle} >
+    <div css={computeStyle} >
       <Button 
         onClick={props.onClick}
         isClicked={props.isClicked}
+        enabled={props.enabled}
       />
       <p>{props.text}</p>
     </div>
@@ -372,11 +400,16 @@ const buttonStyle = css({
 interface IButtonProps {
   onClick: () => void;
   isClicked: boolean;
+  enabled: boolean;
 }
 
-const Button = ({onClick, isClicked}: IButtonProps) => {
+const Button = ({onClick, isClicked, enabled}: IButtonProps) => {
+  function handleClick(): void {
+    enabled ? onClick() : () => {}
+  }
+
   return (
-    <div css={buttonStyle} onClick={onClick}>{ isClicked ? "X" : null }</div>
+    <div css={buttonStyle} onClick={handleClick}>{ isClicked ? "X" : null }</div>
   )
 }
 

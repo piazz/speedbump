@@ -1,0 +1,14 @@
+{
+  "name": "speedbump_extension",
+  "version": "1.0.0",
+  "private": true,
+  "main": "config.js",
+  "scripts": {
+    "build": "tsc && cp manifest.json build"
+  },
+  "author": "Michael Piazza",
+  "license": "ISC",
+  "dependencies": {
+    "@types/firefox-webext-browser": "^67.0.2"
+  }
+}

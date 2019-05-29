@@ -1,6 +1,5 @@
-
 const Configuration = {
-  defaultTimeout: 10,
+  defaultTimeout: 5,
 }
 
 export default Configuration

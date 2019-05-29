@@ -11,36 +11,28 @@ const url = browser.runtime.getURL("index.html");
 // MARK: - Properties
 
 let currentActiveTabId = -1
-let sessionMap = {}
+
+interface ISession {
+    redirectURL: string;
+    tabId: number;
+    isRedirecting: boolean;
+}
+let sessionMap: {[key: number]: ISession} = {}
 
 // MARK: - Listeners
 
-browser.webRequest.onBeforeRequest.addListener(
-    redirectToExtension,
-    { urls: patterns },
-    ["blocking"]
-);
-browser.tabs.onActivated.addListener(onActivatedTab)
-browser.runtime.onMessage.addListener(receiveMessage)
-
-// MARK: - Functions
-
-function onActivatedTab(activeInfo) {
-    currentActiveTabId = activeInfo.tabId
-}
-
-function redirectToExtension(requestDetails) {
+browser.webRequest.onBeforeRequest.addListener((details) => {
     // If we have an originUrl, that means this wasn't
     // a user initiated request, so we don't care about it.
-    if (requestDetails.originUrl) {
+    if (details.originUrl) {
         return
     }
 
     // If we're redirecting for this particular tab right now,
     // delete the redirect session and then return to proceed on.
-    const existingSession = sessionMap[requestDetails.tabId]
+    const existingSession = sessionMap[details.tabId]
     if (existingSession && existingSession.isRedirecting) {
-        delete sessionMap[requestDetails.tabId]
+        delete sessionMap[details.tabId]
         console.log("Not gonna redirect")
         return
     }
@@ -48,9 +40,10 @@ function redirectToExtension(requestDetails) {
     console.log("Redirecting")
     // Otherwise:
     // Create a new session
-    const newSession = {
-        redirectURL: requestDetails.url,
+    const newSession: ISession = {
+        redirectURL: details.url,
         tabId: currentActiveTabId,
+        isRedirecting: false,
     }
 
     // Store it in the map
@@ -59,7 +52,7 @@ function redirectToExtension(requestDetails) {
     // Store the redirect and id in local storage for the react app
     const storingPromise = browser.storage.local.set({
         PAUSE_STATE: {
-            redirectURL: requestDetails.url,
+            redirectURL: details.url,
             id: currentActiveTabId,
         }
     })
@@ -70,9 +63,34 @@ function redirectToExtension(requestDetails) {
             redirectUrl: url
         };
     })
-}
+},
+    { urls: patterns },
+    ["blocking"]
+);
 
-function proceed(tabId) {
+browser.tabs.onActivated.addListener((activeInfo) => {
+    currentActiveTabId = activeInfo.tabId
+})
+
+interface IMessage {
+    type: string;
+    id: number;
+}
+browser.runtime.onMessage.addListener((message: IMessage) => {
+    switch (message.type) {
+        case PROCEED_MESSAGE:
+            proceed(message.id)
+            break
+        case RETREAT_MESSAGE:
+            retreat(message.id)
+            break
+        default:
+            console.warn("Unknown Message")
+    }
+})
+
+
+function proceed(tabId: number) {
     console.log(`Proceeding to URL: ${url}`)
     const session = sessionMap[tabId]
     if (session) {
@@ -82,19 +100,21 @@ function proceed(tabId) {
     }
 }
 
-function retreat(tabId) {
+function retreat(tabId: number) {
     browser.tabs.remove(tabId)
 }
 
-function receiveMessage(message) {
+const PROCEED_MESSAGE = "PROCEED"
+const RETREAT_MESSAGE = "RETREAT"
+function receiveMessage(message: IMessage) {
     switch (message.type) {
-        case "PROCEED":
+        case PROCEED_MESSAGE:
             proceed(message.id)
             break
-        case "RETREAT":
+        case RETREAT_MESSAGE:
             retreat(message.id)
             break
         default:
-            console.warning("Unknown Message")
+            console.warn("Unknown Message")
     }
 }
