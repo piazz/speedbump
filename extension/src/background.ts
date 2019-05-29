@@ -1,11 +1,8 @@
 /* eslint-disable no-undef */
 
+const DefaultPatterns = ["*://*.reddit.com/*", "*://*.facebook.com/*", "*://*.news.ycombinator.com/*"];
 // MARK: - Constants
 
-const patterns = ["*://*.reddit.com/*",
-                 "*://*.facebook.com/*",
-                 "*://*.news.ycombinator.com/*"
-                ];
 const url = browser.runtime.getURL("index.html");
 
 // MARK: - Properties
@@ -20,8 +17,8 @@ interface ISession {
 let sessionMap: {[key: number]: ISession} = {}
 
 // MARK: - Listeners
+const onBeforeRequestListener = (details: any) => {
 
-browser.webRequest.onBeforeRequest.addListener((details) => {
     // If we have an originUrl, that means this wasn't
     // a user initiated request, so we don't care about it.
     if (details.originUrl) {
@@ -63,10 +60,25 @@ browser.webRequest.onBeforeRequest.addListener((details) => {
             redirectUrl: url
         };
     })
-},
-    { urls: patterns },
-    ["blocking"]
-);
+}
+
+const REDIRECT_PATTERNS_KEY = "REDIRECTS"
+const getRedirectPatterns = async () => {
+    const redirects = await browser.storage.sync.get(REDIRECT_PATTERNS_KEY)
+    const patterns: string[] | undefined = redirects[REDIRECT_PATTERNS_KEY]
+    if (patterns instanceof Array) {
+        return patterns
+    } 
+
+    // TODO: Probably want some better way to represent these things.
+    return DefaultPatterns
+}
+
+const refreshRedirects = async () => {
+    const patterns = await getRedirectPatterns()
+    browser.webRequest.onBeforeRequest.removeListener(onBeforeRequestListener)
+    browser.webRequest.onBeforeRequest.addListener(onBeforeRequestListener, { urls: patterns }, ["blocking"]);
+}
 
 browser.tabs.onActivated.addListener((activeInfo) => {
     currentActiveTabId = activeInfo.tabId
@@ -88,7 +100,6 @@ browser.runtime.onMessage.addListener((message: IMessage) => {
             console.warn("Unknown Message")
     }
 })
-
 
 function proceed(tabId: number) {
     console.log(`Proceeding to URL: ${url}`)
@@ -118,3 +129,5 @@ function receiveMessage(message: IMessage) {
             console.warn("Unknown Message")
     }
 }
+
+refreshRedirects()

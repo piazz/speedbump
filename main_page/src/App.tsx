@@ -94,6 +94,7 @@ const App = () => {
       console.log("App running standalone without extension")
       return
     }
+
     browser.storage.local.get(STATE_KEY).then(state => {
       setLocalState(state[STATE_KEY])
       console.log(state)
