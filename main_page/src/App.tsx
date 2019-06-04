@@ -133,6 +133,12 @@ const App: React.FC = () => {
     })
   }
 
+  function shortenRedirectURL(url: string) {
+    const prefixRemoved = url.replace(/^(.*:\/\/)(www\.)/m, "")
+    const suffixRemoved = prefixRemoved.replace(/\..*$/m, "")
+    return suffixRemoved
+  }
+
   return (
     <div css={appStyle}>
       <div css={backgroundImageStyle} />
@@ -150,7 +156,7 @@ const App: React.FC = () => {
         <div>
           <Title title="Pause." />
           <Subtitle 
-            siteName={localState.redirectURL}
+            siteName={shortenRedirectURL(localState.redirectURL)}
             css={{maxWidth: "400px"}}
           />
         </div>
