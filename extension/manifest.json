@@ -15,10 +15,13 @@
             "background.js" 
         ]
     },
-    "web_accessible_resources": ["index.html" ],
+    "web_accessible_resources": ["main/index.html" ],
     "browser_specific_settings": {
         "gecko": {
             "id": "pause@pause.org"
         }
+    },
+    "options_ui": {
+        "page": "options.html"
     }
 }

@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "esnext",
+      "es5",
+    ],
+    "module": "esnext",
+    "strict": true,
+    "outDir": "build",
+    "sourceMap": true
+  }
+}

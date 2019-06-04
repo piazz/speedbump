@@ -1,9 +1,6 @@
-/* eslint-disable no-undef */
-
-const DefaultPatterns = ["*://*.reddit.com/*", "*://*.facebook.com/*", "*://*.news.ycombinator.com/*"];
 // MARK: - Constants
 
-const url = browser.runtime.getURL("index.html");
+const url = browser.runtime.getURL("main/index.html");
 
 // MARK: - Properties
 
@@ -63,26 +60,86 @@ const onBeforeRequestListener = (details: any) => {
 }
 
 const REDIRECT_PATTERNS_KEY = "REDIRECTS"
-const getRedirectPatterns = async () => {
-    const redirects = await browser.storage.sync.get(REDIRECT_PATTERNS_KEY)
-    const patterns: string[] | undefined = redirects[REDIRECT_PATTERNS_KEY]
-    if (patterns instanceof Array) {
-        return patterns
-    } 
-
-    // TODO: Probably want some better way to represent these things.
-    return DefaultPatterns
+interface ISettings {
+    REDIRECTS: string[];
+    TIMEOUT: number;
+}
+const getSettings: () => Promise<ISettings | undefined> = async ()=> {
+    const settings = await browser.storage.sync.get(SETTINGS_KEY)
+    return settings[SETTINGS_KEY]
 }
 
-const refreshRedirects = async () => {
-    const patterns = await getRedirectPatterns()
+const refreshRedirects = (redirects: string[]) => {
+    console.log(`Setting new redirects to: ${redirects}`)
     browser.webRequest.onBeforeRequest.removeListener(onBeforeRequestListener)
-    browser.webRequest.onBeforeRequest.addListener(onBeforeRequestListener, { urls: patterns }, ["blocking"]);
+    browser.webRequest.onBeforeRequest.addListener(onBeforeRequestListener, { urls: redirects }, ["blocking"]);
 }
 
-browser.tabs.onActivated.addListener((activeInfo) => {
-    currentActiveTabId = activeInfo.tabId
-})
+const parseRedirects = (redirects: string[]): string[] => {
+    // URLS will be coming in the formats of "reddit.com", "*.reddit.com", "www.reddit.com", "http://reddit.com", "http://www.reddit.com"
+    const pattern = /^(\w+:\/\/){0,1}(www\.){0,1}/g
+    return redirects.map((str) => {
+        const suffix = str.replace(pattern, "")
+        const withoutTrailingSlash = suffix.replace(/\/$/, "")
+        const ret = `*://*.${withoutTrailingSlash}/*`  
+        console.log(ret)
+        return ret
+    })
+}
+
+function processNewSettings(settings: ISettings) {
+    // TODO: other stuff
+    const redirects = parseRedirects(settings.REDIRECTS)
+    refreshRedirects(redirects)
+    return Promise.resolve()
+}
+
+const defaultSettings: ISettings = {
+    REDIRECTS: ["reddit.com"],
+    TIMEOUT: 5,
+}
+
+async function setDefaultSettings() {
+    return browser.storage.sync.set({
+        [SETTINGS_KEY]: defaultSettings
+    }).then(() => {
+        return defaultSettings
+    })
+}
+
+function initExtension() {
+    // TODO: Remove this clear. This is only for testing. 
+    browser.storage.sync.clear()
+    .then(getSettings)
+    .then((settings) => {
+        if (settings === undefined) {
+            return setDefaultSettings()
+        } else {
+            return settings
+        }
+    })
+    .then(processNewSettings)
+    .then(() => {
+        setupListeners()
+    })
+}
+
+const REDIRECTS_KEY = "REDIRECTS"
+const SETTINGS_KEY = "SETTINGS"
+const TIMEOUT_KEY = "TIMEOUT"
+function setupListeners() {
+    browser.tabs.onActivated.addListener((activeInfo) => {
+        currentActiveTabId = activeInfo.tabId
+    })
+
+    browser.storage.onChanged.addListener(() => {
+        getSettings().then((settings) => {
+            // TODO: Figure out why the fucking typecast doesn't work here
+            // (settings shouldn't be empty at this point)
+            processNewSettings(settings as ISettings)
+        })
+    })
+}
 
 interface IMessage {
     type: string;
@@ -130,4 +187,4 @@ function receiveMessage(message: IMessage) {
     }
 }
 
-refreshRedirects()
+initExtension()

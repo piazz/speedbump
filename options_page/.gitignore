@@ -10,13 +10,6 @@
 
 # production
 /build
-/public
-/extension/build
-/extension/node_modules
-/main_page/build
-/main_page/node_modules
-/options/build
-/options/node_modules
 
 # misc
 .DS_Store

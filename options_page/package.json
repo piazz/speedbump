@@ -1,0 +1,14 @@
+{
+  "name": "options_page",
+  "version": "1.0.0",
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "options.js",
+  "scripts": {
+    "build": "tsc && cp *.html build"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/firefox-webext-browser": "^67.0.2"
+  }
+}

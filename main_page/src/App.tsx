@@ -79,8 +79,7 @@ interface ILocalState {
 const STATE_KEY = "PAUSE_STATE"
 let isUnloading = false
 
-const App = () => {
-  console.log("Repainting")
+const App: React.FC = () => {
   const [localState, setLocalState] = useState({
     redirectURL: "",
     id: -1,
@@ -157,7 +156,7 @@ const App = () => {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 interface ITitleProps {
