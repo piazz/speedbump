@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import CountDownContainer from "./components/CountDown"
 import { Colors } from "./components/css"
-import { jsx, css, SerializedStyles } from "@emotion/core"
+import { jsx, css } from "@emotion/core"
 import Mountain from "../src/assets/mountains.png"
+import Buttons from "./components/Buttons"
 
 const appStyle = css({
   display: "flex",
@@ -28,7 +29,6 @@ const appStyle = css({
   },
 
   h2: {
-    color: Colors.lightRed,
     fontSize: "42px",
     margin: "0px"
   },
@@ -69,7 +69,7 @@ const backgroundBarStyle = css({
 })
 
 const buttonsStyle = css({
-  marginTop: "325px"
+  marginTop: 250
 })
 
 interface ILocalState {
@@ -143,7 +143,8 @@ const App: React.FC = () => {
     <div css={appStyle}>
       <div css={backgroundImageStyle} />
       <div css={backgroundBarStyle}>
-        <Buttons css={buttonsStyle}
+        <Buttons 
+          css={buttonsStyle}
           turnBackSelected={retreat}
           proceedSelected={proceed}
           proceedEnabled={isProceedEnabled}
@@ -157,7 +158,7 @@ const App: React.FC = () => {
           <Title title="Pause." />
           <Subtitle 
             siteName={shortenRedirectURL(localState.redirectURL)}
-            css={{maxWidth: "400px"}}
+            css={{maxWidth: "400px", color: Colors.purpleText}}
           />
         </div>
       </div>
@@ -189,211 +190,6 @@ const Subtitle = ({siteName, className}: ISubtitleProps) => (
     </h2>
   </div>
 )
-
-interface IButtonsProps {
-  turnBackSelected: () => void;
-  proceedSelected: () => void;
-  className?: string;
-  proceedEnabled: boolean;
-}
-
-interface ButtonsState {
-  goBackButtons: Array<ButtonState>
-  proceedButtons: Array<ButtonState>
-}
-
-interface ButtonState {
-  id: string;
-  isSelected: boolean;
-  isVisible: boolean;
-  text: string;
-}
-
-// TODO: Parameterize this
-const defaultButtonState: ButtonsState = {
-  proceedButtons: [
-    {
-      id: "1",
-      isSelected: false,
-      isVisible: true,
-      text: "👉 Yep."
-    },
-    {
-      id: "2",
-      isSelected: false,
-      isVisible: false,
-      text: "👍 Really!"
-    },
-    {
-      id: "3",
-      isSelected: false,
-      isVisible: false,
-      text: "👍 I promise."
-    }
-  ],
-  goBackButtons: [
-    {
-      id: "1",
-      isSelected: false, 
-      isVisible: true,
-      text: "👈 Nah."
-    },
-  ],
-}
-
-const Buttons = (props: IButtonsProps) => {
-  const [buttonState, setButtonState] = useState(defaultButtonState)
-
-  function handleGoBackClick() {
-    const newState: ButtonsState = {...buttonState,
-                        goBackButtons: [{
-                          id: buttonState.goBackButtons[0].id,
-                          isSelected: !buttonState.goBackButtons[0].isSelected,
-                          isVisible: buttonState.goBackButtons[0].isVisible,
-                          text: buttonState.goBackButtons[0].text
-                        }]
-                      }
-    setNewState(newState)
-  }
-
-  // TODO: this algorithm could def be refactored
-  function handleProceedClick(id: string) {
-    let newState = {...buttonState}
-    for (let i = 0; i < newState.proceedButtons.length; i++) {
-      let button = newState.proceedButtons[i]
-      if (button.id === id) {
-        button.isSelected = !button.isSelected
-
-        // If still room, set the next buttons visibility
-        if (i < newState.proceedButtons.length - 1) {
-          const selectedState = button.isSelected
-
-          // If we just selected it, make the next one visible
-          if (selectedState) {
-            let nextButton = newState.proceedButtons[i + 1]
-            nextButton.isVisible = button.isSelected
-          } else {
-            // If we just unselected it, we have to make ALL the next buttons invisible
-            for (let j = i + 1; j < newState.proceedButtons.length; j++) {
-              newState.proceedButtons[j].isVisible = false
-              newState.proceedButtons[j].isSelected = false
-            }
-          }
-        }
-        break
-      }
-    }
-
-    setNewState(newState)
-  }
-
-  function setNewState(state: ButtonsState) {
-    // Just 1 back has to be selected
-    function goBackSelected(): boolean {
-      return state.goBackButtons.reduce((acc: boolean, cur) => (
-        acc || cur.isSelected
-      ), false)
-    }
-
-    // All proceed have to be selected
-    function proceedSelected(): boolean {
-      return state.proceedButtons.reduce((acc: boolean, cur) => (
-        acc && cur.isSelected
-      ), state.proceedButtons[0].isSelected)
-    }
-    
-    setButtonState(state)
-
-    if (goBackSelected()) {
-      props.turnBackSelected()
-    } else if (proceedSelected()) {
-      props.proceedSelected()
-    }
-  }
-
-  // TODO: Could extract some sort of buttonState -> button mapper func
-  return (
-    <div css={buttonColumnsContainer} className={props.className}>
-      <div css={buttonColumnStyle}>
-        {
-          buttonState.goBackButtons.map(e => ( e.isVisible ? 
-            <ButtonHolder 
-              onClick={handleGoBackClick}
-              isClicked={e.isSelected}
-              text={e.text}
-              key={e.id}
-              enabled={true}
-            /> : null
-          ))
-        }
-      </div>
-      <div css={buttonColumnStyle}>
-        { 
-          buttonState.proceedButtons.map(e => ( e.isVisible ? 
-            <ButtonHolder 
-              onClick={() => { handleProceedClick(e.id)}}
-              isClicked={e.isSelected}
-              text={e.text}
-              key={e.id}
-              enabled={props.proceedEnabled}
-            /> : null
-          ))
-        }
-      </div>
-    </div>
-  )
-}
-
-const buttonColumnStyle = css({
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "start",
-  alignItems: "start"
-})
-
-const buttonColumnsContainer = css({
-  display: "flex",
-  flexDirection: "row",
-})
-
-interface IButtonHolderProps {
-  onClick: () => void;
-  isClicked: boolean;
-  text: string;
-  enabled: boolean;
-}
-
-const buttonHolderStyle = css({
-  display: "flex",
-  flexDirection: "row",
-  fontStyle: "italic",
-  alignItems: "center",
-  justifyContent: "space-between"
-})
-
-const disabledStyle = css({
-  opacity: 0.25
-})
-
-const ButtonHolder = (props: IButtonHolderProps) => {
-  function computeStyle(): Array<SerializedStyles> {
-    if (props.enabled) {
-      return [buttonHolderStyle]
-    }
-    return [buttonHolderStyle, disabledStyle]
-  }
-
-  return (
-    <div css={computeStyle} >
-      <Button 
-        onClick={props.onClick}
-        isClicked={props.isClicked}
-        enabled={props.enabled}
-      />
-      <p>{props.text}</p>
-    </div>
-  )
-}
 
 const buttonStyle = css({
   height: 25,
