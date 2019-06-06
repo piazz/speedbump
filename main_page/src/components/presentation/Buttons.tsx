@@ -2,7 +2,7 @@
 import React from "react"
 import TextButton from "./TextButton"
 import { jsx, css } from "@emotion/core"
-import { Colors } from "./css";
+import { Colors } from "../../utility/Constants";
 
 interface IButtonsProps {
   turnBackSelected: () => void
@@ -12,7 +12,7 @@ interface IButtonsProps {
 }
 
 const goBackStyle = css({
-  color: Colors.purpleText
+  color: Colors.darkText1
 })
 
 const goForwardStyle = css({
@@ -25,7 +25,6 @@ const disabledStyle = css({
 
 const buttonsStyle = css({
   padding: 45,
-  background: "linear-gradient(180deg, #FF8A8A 0%, #FA6D6D 100%)",
   borderRadius: 3,
   display: "flex",
   flexDirection: "row",

@@ -1,8 +1,8 @@
 /** @jsx jsx */
-import React, {useState, useEffect} from "react"
+import {useState, useEffect} from "react"
 import Configuration from "./configuration"
 import { jsx, css, keyframes } from '@emotion/core'
-import { Colors } from "./css";
+import { Colors } from "../../utility/Constants";
 
 interface ICountDownClockProps {
   seconds: number;

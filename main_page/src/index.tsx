@@ -1,10 +1,19 @@
-import React from 'react';
+/** @jsx jsx */
+import { jsx } from "@emotion/core"
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { createStore, applyMiddleware } from 'redux';
+import rootReducer from './reducers';
+import { Provider } from 'react-redux';
+import thunkMiddlware from "redux-thunk"
+import AppContainer from './components/container/AppContainer';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const store = createStore(rootReducer, applyMiddleware(thunkMiddlware))
+
+ReactDOM.render(
+    <Provider store={store}>
+        <AppContainer />
+    </Provider>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
