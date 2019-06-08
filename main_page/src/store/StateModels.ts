@@ -14,6 +14,7 @@ export interface StatsState {
 }
 
 // TODO: Flesh out events/metrics
+// tslint:disable-next-line:no-empty-interface
 export interface Event {
 }
 

@@ -6,12 +6,12 @@ const url = browser.runtime.getURL("main/index.html");
 
 let currentActiveTabId = -1
 
-interface ISession {
+interface Session {
     redirectURL: string;
     tabId: number;
     isRedirecting: boolean;
 }
-let sessionMap: {[key: number]: ISession} = {}
+let sessionMap: {[key: number]: Session} = {}
 
 // MARK: - Listeners
 const onBeforeRequestListener = (details: any) => {
@@ -34,7 +34,7 @@ const onBeforeRequestListener = (details: any) => {
     console.log("Redirecting")
     // Otherwise:
     // Create a new session
-    const newSession: ISession = {
+    const newSession: Session = {
         redirectURL: details.url,
         tabId: currentActiveTabId,
         isRedirecting: false,
@@ -47,7 +47,7 @@ const onBeforeRequestListener = (details: any) => {
     const storingPromise = browser.storage.local.set({
         PAUSE_STATE: {
             redirectURL: details.url,
-            id: currentActiveTabId,
+            currentTabId: currentActiveTabId,
         }
     })
 
@@ -141,11 +141,11 @@ function setupListeners() {
     })
 }
 
-interface IMessage {
+interface Message {
     type: string;
     id: number;
 }
-browser.runtime.onMessage.addListener((message: IMessage) => {
+browser.runtime.onMessage.addListener((message: Message) => {
     switch (message.type) {
         case PROCEED_MESSAGE:
             proceed(message.id)
@@ -174,7 +174,7 @@ function retreat(tabId: number) {
 
 const PROCEED_MESSAGE = "PROCEED"
 const RETREAT_MESSAGE = "RETREAT"
-function receiveMessage(message: IMessage) {
+function receiveMessage(message: Message) {
     switch (message.type) {
         case PROCEED_MESSAGE:
             proceed(message.id)

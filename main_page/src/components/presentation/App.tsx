@@ -1,11 +1,12 @@
 /** @jsx jsx */
-import React, { useState, useEffect } from 'react';
-import CountDownContainer from "./CountDown"
-import { Colors } from "../../utility/Constants"
-import { jsx, css } from "@emotion/core"
+import { css, jsx } from "@emotion/core"
+import React from "react"
+
+import { Colors } from "../../utility/constants"
 import Buttons from "./Buttons"
-import Title from "./Title"
+import CountDownContainer from "./CountDown"
 import Subtitle from "./Subtitle"
+import Title from "./Title"
 
 const appStyle = css({
   display: "flex",
@@ -71,80 +72,42 @@ const buttonsStyle = css({
   marginTop: 250
 })
 
-interface ILocalState {
-  redirectURL: string;
-  id: number;
+interface AppProps {
+  friendlyURL: string
+  proceedEnabled: boolean
+  didClickProceed: () => void
+  didClickRetreat: () => void
+  enableProceedButton: () => void
 }
 
-const STATE_KEY = "PAUSE_STATE"
-let isUnloading = false
-
-const App: React.FC = () => {
-  const [localState, setLocalState] = useState({
-    redirectURL: "",
-    id: -1,
-  } as ILocalState)
-
-  const [isProceedEnabled, setIsProceedEnabled] = useState(false)
-
-  useEffect(() => {
-    window.addEventListener("beforeunload", () => {
-      isUnloading = true
-    })
-  }, [])
-
-  function proceed() {
-    browser.runtime.sendMessage({
-      type: "PROCEED",
-      id: localState.id
-    })
-  }
-  
-  function enableButton() {
-    setIsProceedEnabled(true)
-  }
-
-  function retreat() {
-    history.back()
-    setTimeout(function() {
-      if (!isUnloading) {
-        sendRetreatMessage()
-      }
-    }, 1000)
-  }
-
-  function sendRetreatMessage() {
-    browser.runtime.sendMessage({
-      type: "RETREAT",
-      id: localState.id
-    })
-  }
-
-  function shortenRedirectURL(url: string) {
-    const prefixRemoved = url.replace(/^(.*:\/\/)(www\.)/m, "")
-    const suffixRemoved = prefixRemoved.replace(/\..*$/m, "")
-    return suffixRemoved
-  }
+const App: React.FC<AppProps> = (
+  {
+    friendlyURL,
+    proceedEnabled,
+    didClickProceed,
+    didClickRetreat,
+    enableProceedButton
+  }) => {
 
   return (
     <div css={appStyle}>
       <div css={backgroundImageStyle} />
       <div css={backgroundBarStyle}>
-        <Buttons 
+        <Buttons
           css={buttonsStyle}
-          turnBackSelected={retreat}
-          proceedSelected={proceed}
-          proceedEnabled={isProceedEnabled}
+          turnBackSelected={didClickRetreat}
+          proceedSelected={didClickProceed}
+          proceedEnabled={proceedEnabled}
         />
       </div>
       <div css={containerStyle}>
-        <CountDownContainer 
-          onReachZero={enableButton}
+        <CountDownContainer
+          onReachZero={enableProceedButton}
         />
         <div>
           <Title title="Pause." />
-          <Subtitle 
-            siteName={shortenRedirectURL(localState.redirectURL)}
+          <Subtitle
+            siteName={friendlyURL}
             css={{maxWidth: "400px", color: Colors.darkText1}}
           />
         </div>

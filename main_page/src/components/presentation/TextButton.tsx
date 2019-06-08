@@ -1,7 +1,7 @@
 /** @jsx jsx */
-import { jsx, css, SerializedStyles } from "@emotion/core"
+import { css, jsx, SerializedStyles } from "@emotion/core"
 
-interface ITextButtonProps {
+interface TextButtonProps {
     enabled: boolean
     className?: string
     enabledStyle: SerializedStyles
@@ -14,14 +14,16 @@ const containerCSS = css({
     margin: "0px 20px"
 })
 
-const TextButton = ({ enabled, className, enabledStyle, disabledStyle, onClick, children}: ITextButtonProps) => {
+const TextButton = ({ enabled, className, enabledStyle, disabledStyle, onClick, children}: TextButtonProps) => {
     function handleClick() {
-        enabled ? onClick(): null
+        if (enabled) {
+            onClick()
+        }
     }
 
     function computeCSS() {
         const style =  enabled ? enabledStyle : disabledStyle
-        const cursor = enabled ? css({cursor: "pointer"}): null
+        const cursor = enabled ? css({cursor: "pointer"}) : null
         return [style, cursor, containerCSS]
     }
 

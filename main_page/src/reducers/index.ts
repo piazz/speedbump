@@ -1,8 +1,8 @@
-import { combineReducers, Reducer, AnyAction } from "redux"
+import { AnyAction, combineReducers, Reducer } from "redux"
 import { RootState } from "../store/StateModels";
+import appReducer from "./appReducer";
 import configurationReducer from "./configurationReducer";
 import sessionReducer from "./sessionReducer";
-import appReducer from "./appReducer";
 import statsReducer from "./statsReducer";
 
 const rootReducer: Reducer<RootState, AnyAction> = combineReducers({

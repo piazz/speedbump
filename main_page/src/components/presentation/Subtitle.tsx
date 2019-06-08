@@ -1,12 +1,12 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core"
 
-interface ISubtitleProps {
+interface SubtitleProps {
   siteName: string;
   className?: string;
 }
 
-const Subtitle = ({siteName, className}: ISubtitleProps) => (
+const Subtitle = ({siteName, className}: SubtitleProps) => (
   <div className={className}>
     <h2>
         {`Did you really mean to go to ${siteName}?`}

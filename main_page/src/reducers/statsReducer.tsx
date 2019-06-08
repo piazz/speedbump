@@ -1,5 +1,5 @@
+import { STATS_LOADED, StatsActions } from "../store/actions/statsActions";
 import { StatsState } from "../store/StateModels";
-import { StatsActions, STATS_LOADED } from "../store/actions/statsActions";
 
 const defaultState: StatsState = {
     pathToStatMap: {}

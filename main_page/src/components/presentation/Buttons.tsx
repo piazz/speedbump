@@ -1,10 +1,11 @@
 /** @jsx jsx */
+import { css, jsx } from "@emotion/core"
 import React from "react"
-import TextButton from "./TextButton"
-import { jsx, css } from "@emotion/core"
-import { Colors } from "../../utility/Constants";
 
-interface IButtonsProps {
+import { Colors } from "../../utility/constants"
+import TextButton from "./TextButton"
+
+interface ButtonProps {
   turnBackSelected: () => void
   proceedSelected: () => void
   className?: string
@@ -31,7 +32,7 @@ const buttonsStyle = css({
   boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)"
 })
 
-const Buttons: React.FC<IButtonsProps> = (props) => {
+const Buttons: React.FC<ButtonProps> = (props) => {
   return (
     <div css={buttonsStyle} className={props.className}>
         <TextButton

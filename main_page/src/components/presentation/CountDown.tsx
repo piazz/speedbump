@@ -1,10 +1,11 @@
 /** @jsx jsx */
-import {useState, useEffect} from "react"
-import Configuration from "./configuration"
-import { jsx, css, keyframes } from '@emotion/core'
-import { Colors } from "../../utility/Constants";
+import { css, jsx, keyframes } from "@emotion/core"
+import { useEffect, useState } from "react"
 
-interface ICountDownClockProps {
+import { Colors } from "../../utility/constants"
+import Configuration from "./configuration"
+
+interface CountDownClockProps {
   seconds: number;
   startingVal: number;
   isBig: boolean;
@@ -20,7 +21,7 @@ const countDownClockCircleStyle = css({
 })
 
 const countDownClockCircleAnimationStyle = (circ: number, duration: number) => {
-  // const offset = -1 * progress * circ 
+  // const offset = -1 * progress * circ
   const animation = keyframes({
     "0%": {
       "stroke-dashoffset": `${0}`,
@@ -33,10 +34,9 @@ const countDownClockCircleAnimationStyle = (circ: number, duration: number) => {
   return css({
     "stroke-dashoffset": `${0}`,
     "stroke-dasharray": `${circ} ${circ}`,
-    animation: `${duration}s linear ${animation}`
+    "animation": `${duration}s linear ${animation}`
   })
 }
-
 
 const countDownClockText = css({
     fontFamily: "Roboto",
@@ -81,7 +81,7 @@ const CountDownContainer = ({onReachZero}: CountDownContainerProps) => {
     setIsBig(true)
     setTimeout(() => {
       setIsBig(false);
-    }, 0.8* SEC_TO_MSEC)
+    }, 0.8 * SEC_TO_MSEC)
   }
 
   useEffect(() => {
@@ -99,7 +99,7 @@ const CountDownContainer = ({onReachZero}: CountDownContainerProps) => {
     }
 
     setTimeout(decrementCount, 1 * SEC_TO_MSEC)
-  }, [timeRemaining]) 
+  }, [timeRemaining])
 
   return (
     <CountDownClock
@@ -110,11 +110,10 @@ const CountDownContainer = ({onReachZero}: CountDownContainerProps) => {
   )
 }
 
-
-const CountDownClock = ({seconds, startingVal, isBig}: ICountDownClockProps) => {
+const CountDownClock = ({seconds, startingVal, isBig}: CountDownClockProps) => {
     const length = 180
     const strokeWidth = 20
-    const radius = (length/2) - strokeWidth
+    const radius = (length / 2) - strokeWidth
     const circ = Math.PI * radius * 2
 
     return (
@@ -129,22 +128,22 @@ const CountDownClock = ({seconds, startingVal, isBig}: ICountDownClockProps) => 
           <div css={[countDownClockText, (isBig ? bigTextStyle : {})]}>
               {`${seconds}`}
           </div>
-          <svg 
+          <svg
             css={[svgStyle, (isBig ? bigClockStyle : {})]}
             width={length}
             height={length}
           >
             <circle
-              cx={length/2}
-              cy={length/2}
+              cx={length / 2}
+              cy={length / 2}
               fill="transparent"
               r={radius}
               stroke-width={5}
               stroke="rgba(255, 255, 255, 0.4)"
             />
             <circle
-                cx={length/2}
-                cy={length/2}
+                cx={length / 2}
+                cy={length / 2}
                 stroke-width={strokeWidth}
                 stroke={Colors.white}
                 fill="transparent"

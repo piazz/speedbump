@@ -19,13 +19,13 @@ document.addEventListener("DOMContentLoaded", restoreOptions)
 
 // MARK: - Models
 
-interface ISettings {
+interface Settings {
     REDIRECTS: string[];
     TIMEOUT: number;
 }
 
 function restoreOptions() {
-    let settings = browser.storage.sync.get(SETTINGS_KEY) as Promise<{[SETTINGS_KEY]: ISettings}>
+    let settings = browser.storage.sync.get(SETTINGS_KEY) as Promise<{[SETTINGS_KEY]: Settings}>
     settings.then((result) => {
         const settings = result[SETTINGS_KEY]
         if (!settings) {
@@ -52,7 +52,7 @@ function saveOptions(e: Event) {
     }
 
     const processedPatterns = processPatterns(redirects)
-    const newSettings: ISettings = {
+    const newSettings: Settings = {
         REDIRECTS: processedPatterns,
         TIMEOUT: Number(timeout)
     }

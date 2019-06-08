@@ -10,5 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "@types/firefox-webext-browser": "^67.0.2"
+  },
+  "devDependencies": {
+    "typescript": "^3.5.1"
   }
 }

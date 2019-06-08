@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx, css } from "@emotion/core"
+import { css } from "@emotion/core"
 
 export const Colors = {
   white: "#FFFFFF",
@@ -11,10 +11,10 @@ export const Colors = {
 
 export const Styles = {
   dropShadowed: css({
-    boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
+    boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)"
   })
 }
 
-export const Storage = {
+export const StorageConstants = {
   STATE_KEY: "PAUSE_STATE"
 }

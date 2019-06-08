@@ -1,5 +1,11 @@
+import {
+    AppActions,
+    ENABLE_PROCEED_BUTTON,
+    FINISHED_LOADING,
+    IS_GOING_BACK,
+    TIME_REMAINING,
+} from "../store/actions/appActions"
 import { AppState } from "../store/StateModels"
-import { AppActions, IS_GOING_BACK, TIME_REMAINING, FINISHED_LOADING } from "../store/actions/appActions";
 
 const defaultAppState: AppState = {
     timeRemaining: 5,
@@ -16,7 +22,9 @@ const AppReducer = (state: AppState = defaultAppState, action: AppActions): AppS
             return { ...state, timeRemaining: action.payload.newTime }
         case FINISHED_LOADING:
             return {...state, loading: false}
-        default: 
+        case ENABLE_PROCEED_BUTTON:
+            return {...state, proceedEnabled: true}
+        default:
             return state
     }
 }

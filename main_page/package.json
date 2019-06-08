@@ -13,11 +13,13 @@
     "react-redux": "^7.0.3",
     "react-scripts": "2.1.8",
     "redux": "^4.0.1",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "winston": "^3.2.1"
   },
   "scripts": {
-    "start": "INLINE_RUNTIME_CHUNK=false react-scripts start",
-    "build": "INLINE_RUNTIME_CHUNK=false react-scripts build",
+    "lint": "tslint --fix --format verbose -c tslint.json src/**/*.{ts,tsx}",
+    "start": "npm run lint && INLINE_RUNTIME_CHUNK=false react-scripts start",
+    "build": "npm run lint && INLINE_RUNTIME_CHUNK=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -35,6 +37,7 @@
     "@types/react": "^16.8.19",
     "@types/react-dom": "^16.8.4",
     "@types/react-redux": "^7.0.9",
+    "tslint": "^5.17.0",
     "typescript": "^3.4.4"
   }
 }
