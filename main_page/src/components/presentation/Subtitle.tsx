@@ -1,15 +1,28 @@
 /** @jsx jsx */
-import { jsx } from "@emotion/core"
+import { css, jsx } from "@emotion/core"
+
+import { Colors } from "../../utility/constants"
 
 interface SubtitleProps {
   siteName: string;
   className?: string;
 }
 
+const subtitleStyle = css({
+  h2: {
+    fontSize: "42px",
+    margin: "0px",
+  },
+
+  span: {
+    color: Colors.white
+  }
+})
+
 const Subtitle = ({siteName, className}: SubtitleProps) => (
-  <div className={className}>
+  <div css={subtitleStyle} className={className}>
     <h2>
-        {`Did you really mean to go to ${siteName}?`}
+      Really go to <span>{siteName}?</span>
     </h2>
   </div>
 )

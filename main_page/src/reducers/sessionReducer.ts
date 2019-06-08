@@ -21,7 +21,8 @@ const shortenRedirectURL = (url: string) => {
 }
 
 export const selectFriendlyURL = (state: SessionState) => {
-    return shortenRedirectURL(state.redirectURL)
+    const shortened = shortenRedirectURL(state.redirectURL)
+    return shortened.charAt(0).toUpperCase() + shortened.slice(1)
 }
 
 export default SessionReducer

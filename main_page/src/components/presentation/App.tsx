@@ -3,8 +3,8 @@ import { css, jsx } from "@emotion/core"
 import React from "react"
 
 import { Colors } from "../../utility/constants"
+import CountDownClockContainer from "../container/CountDownClockContainer"
 import Buttons from "./Buttons"
-import CountDownContainer from "./CountDown"
 import Subtitle from "./Subtitle"
 import Title from "./Title"
 
@@ -13,7 +13,6 @@ const appStyle = css({
   flexDirection: "column",
   width: "100%",
   height: "100vh",
-  backgroundColor: Colors.white,
   justifyContent: "center",
   alignItems: "center",
   position: "relative",
@@ -21,55 +20,32 @@ const appStyle = css({
   fontStyle: "normal",
   fontWeight: "bold",
 
-  background: Colors.gradient2,
-  h1: {
-    color: "white",
-    fontSize: "144px",
-    textShadow: "0px 4px 10px rgba(0, 0, 0, 0.15)",
-    lineHeight: "169px",
-    margin: "0px"
-  },
-
-  h2: {
-    fontSize: "42px",
-    margin: "0px"
-  },
-
   p: {
     fontSize: "24px",
-    color: Colors.darkText1
+    color: Colors.lightText1
   }
 })
 
-const backgroundImageStyle = css({
-  opacity: 0.5,
-  position: "absolute",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "100%",
-  width: "100vw",
-  height: "100vh",
-})
-
-const containerStyle = css({
-  display: "flex",
-  justifyContent: "center",
-  zIndex: 0,
-  alignItems: "center",
-})
-
-const backgroundBarStyle = css({
-  height: 300,
-  width: "100%",
-  background: Colors.gradient1,
-  position: "absolute",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "start",
-  flexDirection: "column"
+const countDownStyle = css({
+  position: "absolute"
 })
 
 const buttonsStyle = css({
-  marginTop: 250
+})
+
+const textContainerStyle = css({
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center"
+})
+
+const titleStyle = css({
+  color: Colors.white
+})
+
+const baseSubtitleCSS = css({
+  maxWidth: "400px"
 })
 
 interface AppProps {
@@ -89,31 +65,43 @@ const App: React.FC<AppProps> = (
     enableProceedButton
   }) => {
 
-  return (
-    <div css={appStyle}>
-      <div css={backgroundImageStyle} />
-      <div css={backgroundBarStyle}>
-        <Buttons
-          css={buttonsStyle}
-          turnBackSelected={didClickRetreat}
-          proceedSelected={didClickProceed}
-          proceedEnabled={proceedEnabled}
-        />
-      </div>
-      <div css={containerStyle}>
-        <CountDownContainer
+    const computeAppCSS = () => {
+      const backgroundCSS = proceedEnabled ?
+        css({backgroundImage: Colors.background2}) :
+        css({backgroundColor: Colors.background1})
+      return [appStyle, backgroundCSS]
+    }
+
+    const computeSubtitleCSS = () => {
+      const color = proceedEnabled ? Colors.lightText2 : Colors.lightText1
+      return [baseSubtitleCSS, css({
+        color
+      })]
+    }
+
+    return (
+      <div css={computeAppCSS()}>
+        <CountDownClockContainer
           onReachZero={enableProceedButton}
+          css={countDownStyle}
         />
-        <div>
-          <Title title="Pause." />
+        <div css={textContainerStyle}>
+          <Title title="Pause."
+            css={titleStyle}
+          />
           <Subtitle
             siteName={friendlyURL}
-            css={{maxWidth: "400px", color: Colors.darkText1}}
+            css={computeSubtitleCSS()}
+          />
+          <Buttons
+            css={buttonsStyle}
+            turnBackSelected={didClickRetreat}
+            proceedSelected={didClickProceed}
+            proceedEnabled={proceedEnabled}
           />
         </div>
-      </div>
-    </div>
-  )
+        </div>
+    )
 }
 
 export default App;

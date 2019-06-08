@@ -14,7 +14,15 @@ const containerCSS = css({
     margin: "0px 20px"
 })
 
-const TextButton = ({ enabled, className, enabledStyle, disabledStyle, onClick, children}: TextButtonProps) => {
+const baseStyle = css({
+    fontFamily: "Roboto",
+    fontStyle: "normal",
+    fontWeight: "bold",
+    fontSize: "84px",
+    lineHeight: "98px",
+})
+
+const TextButton = ({ enabled, enabledStyle, disabledStyle, onClick, children}: TextButtonProps) => {
     function handleClick() {
         if (enabled) {
             onClick()
@@ -22,18 +30,14 @@ const TextButton = ({ enabled, className, enabledStyle, disabledStyle, onClick, 
     }
 
     function computeCSS() {
-        const style =  enabled ? enabledStyle : disabledStyle
-        const cursor = enabled ? css({cursor: "pointer"}) : null
-        return [style, cursor, containerCSS]
-    }
-
-    function computeContainerCSS() {
-        return enabled ? css({}) : css({pointerEvents: "none"})
+        const enabledOrDisabled =  enabled ? enabledStyle : disabledStyle
+        const cursorStyle = enabled ? css({cursor: "pointer"}) : css({pointerEvents: "none"})
+        return [baseStyle, enabledOrDisabled, cursorStyle, containerCSS]
     }
 
     return (
-        <div onClick={handleClick} css={computeContainerCSS} >
-            <h2 className={className} css={computeCSS()}>{children}</h2>
+        <div onClick={handleClick} css={computeCSS()} >
+            {children}
         </div>
     )
 }

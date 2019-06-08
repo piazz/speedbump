@@ -12,16 +12,12 @@ interface ButtonProps {
   proceedEnabled: boolean
 }
 
-const goBackStyle = css({
-  color: Colors.darkText1
-})
-
 const goForwardStyle = css({
   color: Colors.white
 })
 
 const disabledStyle = css({
-  color: "rgba(255, 255, 255, 0.25)"
+  color: Colors.disabledText1
 })
 
 const buttonsStyle = css({
@@ -29,15 +25,20 @@ const buttonsStyle = css({
   borderRadius: 3,
   display: "flex",
   flexDirection: "row",
-  boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)"
 })
 
 const Buttons: React.FC<ButtonProps> = (props) => {
+  const goBackStyle = () => {
+    const color = props.proceedEnabled ? Colors.darkText2 : Colors.darkText1
+    return css({
+      color
+    })
+  }
   return (
     <div css={buttonsStyle} className={props.className}>
         <TextButton
             enabled={true}
-            enabledStyle={goBackStyle}
+            enabledStyle={goBackStyle()}
             disabledStyle={disabledStyle}
             onClick={props.turnBackSelected}
         >Nope.</TextButton>

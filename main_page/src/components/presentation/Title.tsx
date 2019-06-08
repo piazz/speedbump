@@ -1,15 +1,22 @@
 /** @jsx jsx */
-import { jsx } from "@emotion/core"
+import { css, jsx } from "@emotion/core"
 
-interface ITitleProps {
+interface TitleProps {
   title: string;
   className?: string;
 }
 
-const Title = ({title, className}: ITitleProps) => {
+const titleStyle = css({
+  h1: {
+    fontSize: 152,
+    lineHeight: "1px"
+  },
+})
+
+const Title = ({title, className}: TitleProps) => {
   return (
-    <div>
-      <h1 className={className}>{title}</h1>
+    <div css={titleStyle} className={className}>
+      <h1>{title}</h1>
     </div>
   )
 }
