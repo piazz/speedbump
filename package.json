@@ -4,12 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "./scripts/build.sh"
+    "build": "./scripts/build.sh",
+    "sign": "cd build && web-ext sign --api-secret=$FF_API_SECRET --api-key=$FF_API_KEY", 
+    "deploy": "cd build/web-ext-artifacts && aws s3 cp ./pause-1.0.zip s3://projectpause/ext/",
+    "webbuild": "cd build && web-ext build --overwrite-dest"
   },
   "author": "Michael Piazza",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/piazzatron/speedbump/issues"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "web-ext": "^3.0.0"
+  }
 }

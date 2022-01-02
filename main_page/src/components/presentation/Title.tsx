@@ -9,7 +9,7 @@ interface TitleProps {
 const titleStyle = css({
   h1: {
     fontSize: 152,
-    lineHeight: "1px"
+    "margin-bottom": -20,
   },
 })
 

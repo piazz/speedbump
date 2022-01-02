@@ -35,19 +35,18 @@ const countDownClockCircleAnimationStyle = (circ: number, duration: number) => {
 
 const bounce = keyframes({
   "0% 100%": {
-    transform: "scale(1.0, 1.0)", opacity: 100,
+    transform: "scale(1.0)"
   },
-  "33%": {
-    transform: "scale(1.05, 1.05)",
-    opacity: 85,
+  "25%": {
+    transform: "scale(1.02)",
   },
   "66%": {
-    transform: "scale(0.97, 0.97)"
-  }
+    transform: "scale(0.99)"
+  },
 })
 
 const bigClockStyle = css({
-  animation: `0.4s ease-out ${bounce} `
+  animation: `0.6s ease ${bounce} `
 });
 
 const svgStyle = css({
@@ -58,7 +57,7 @@ const svgStyle = css({
 })
 
 const Constants = {
-  diameter: 675,
+  diameter: 725,
   strokeWidthOuter: 20,
   strokeWidthInner: 10
 }

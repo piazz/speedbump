@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { css, jsx } from "@emotion/core"
+import { css, jsx, keyframes } from "@emotion/core"
 import React from "react"
 
 import { Colors } from "../../utility/constants"
@@ -26,11 +26,28 @@ const appStyle = css({
   }
 })
 
-const countDownStyle = css({
-  position: "absolute"
+const circleEntryAnimation = keyframes({
+  "0%": {
+     transform: "scale(1.15)",
+      opacity: 0
+  },
+  "25%": {
+     opacity: 1
+  },
+  "30%": {
+      transform: "scale(0.95)"
+  },
+  "60%": {
+      transform: "scale(0.99)"
+  },
+  "100%": {
+     transform: "scale(1)"
+  },
 })
 
-const buttonsStyle = css({
+const countDownStyle = css({
+  position: "absolute",
+  animation: `${circleEntryAnimation} 1s ease-out`
 })
 
 const textContainerStyle = css({
@@ -40,8 +57,26 @@ const textContainerStyle = css({
   alignItems: "center"
 })
 
+const titleAnimation = keyframes({
+  "0%": {
+    opacity: 0,
+    transform: "scale(0.95)"
+  },
+
+  "50%": {
+    opacity: 0.8,
+    transform: "scale(0.98)"
+  },
+
+  "100%": {
+    opacity: 1,
+    transform: "scale(1)"
+  }
+})
+
 const titleStyle = css({
-  color: Colors.white
+  color: Colors.white,
+  animation: `${titleAnimation} 0.75s ease-out`
 })
 
 const baseSubtitleCSS = css({
@@ -54,6 +89,21 @@ interface AppProps {
   didClickProceed: () => void
   didClickRetreat: () => void
   enableProceedButton: () => void
+}
+
+const versionTextStyle = css({
+  position: "absolute",
+  bottom: 10,
+  right: 10,
+  color: Colors.white,
+  "font-size": "12px"
+})
+
+const VersionText = () => {
+  return (
+  <div css={versionTextStyle}>
+    v{String(process.env.REACT_APP_VERSION)} ❤ ️piazza
+  </div>)
 }
 
 const App: React.FC<AppProps> = (
@@ -94,11 +144,11 @@ const App: React.FC<AppProps> = (
             css={computeSubtitleCSS()}
           />
           <Buttons
-            css={buttonsStyle}
             turnBackSelected={didClickRetreat}
             proceedSelected={didClickProceed}
             proceedEnabled={proceedEnabled}
           />
+          <VersionText/ >
         </div>
         </div>
     )

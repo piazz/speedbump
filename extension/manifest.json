@@ -1,8 +1,8 @@
 {
-    "description": "Demonstrating webRequests",
+    "description": "Browse mindfully.",
     "manifest_version": 2,
-    "name": "webRequest-demo",
-    "version": "1.0",
+    "name": "Pause",
+    "version": "1.1",
     "permissions": [
         "webRequest",
         "<all_urls>",
@@ -18,7 +18,7 @@
     "web_accessible_resources": ["main/index.html" ],
     "browser_specific_settings": {
         "gecko": {
-            "id": "pause@pause.org"
+            "id": "admin@pause.io"
         }
     },
     "options_ui": {

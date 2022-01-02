@@ -22,7 +22,7 @@ const subtitleStyle = css({
 const Subtitle = ({siteName, className}: SubtitleProps) => (
   <div css={subtitleStyle} className={className}>
     <h2>
-      Really go to <span>{siteName}?</span>
+      Did you really want to go to <span>{siteName}?</span>
     </h2>
   </div>
 )
